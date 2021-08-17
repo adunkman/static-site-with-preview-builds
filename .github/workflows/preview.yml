@@ -37,6 +37,3 @@ jobs:
         if: ${{ env.AWS_ACCESS_KEY_ID != '' && github.event.number != '' }}
         id: deploy
         run: echo "::set-output name=environment_url::https://pr-${{ github.event.number }}.preview.${{ secrets.DOMAIN_NAME }}"
-        outputs:
-          environment_url:
-            description: The configured URL of the completed deployment

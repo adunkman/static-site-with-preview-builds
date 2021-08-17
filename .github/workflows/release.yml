@@ -68,6 +68,3 @@ jobs:
         if: ${{ env.PROD_AWS_ACCESS_KEY_ID != '' }}
         id: deploy
         run: echo "::set-output name=environment_url::https://www.${{ secrets.DOMAIN_NAME }}"
-        outputs:
-          environment_url:
-            description: The configured URL of the completed deployment
