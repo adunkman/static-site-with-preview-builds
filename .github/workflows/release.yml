@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: main
-      url: https://www.${{ secrets.DOMAIN_NAME }}
+      url: ${{ steps.deploy.outputs.environment_url }}
     env:
       HUGO_ENV: production
     steps:
@@ -63,3 +63,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+
+      - name: Set environment URL
+        if: ${{ env.PROD_AWS_ACCESS_KEY_ID != '' }}
+        id: deploy
+        run: echo "::set-output name=environment_url::https://www.${{ secrets.DOMAIN_NAME }}"
+        outputs:
+          environment_url:
+            description: The configured URL of the completed deployment
