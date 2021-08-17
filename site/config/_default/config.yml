@@ -1,0 +1,7 @@
+relativeURLs: true
+languageCode: en-us
+title: Example static site
+
+ignoreFiles:
+  - .gitignore
+  - Dockerfile

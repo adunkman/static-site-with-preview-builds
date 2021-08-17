@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: main
+      url: https://www.${{ secrets.DOMAIN_NAME }}
+    env:
+      HUGO_ENV: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: terraform/.terraform
+          key: v1-${{ hashFiles('terraform/.terraform.lock.hcl', 'terraform/main.tf') }}
+
+      - name: Build site
+        run: make build
+
+      - name: Scan infrastructure files for security issues
+        run: make tfsec
+
+      - name: Initialize terraform
+        if: ${{ env.PROD_AWS_ACCESS_KEY_ID != '' }}
+        run: make terraform-init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+
+      - name: Plan infrastructure changes
+        if: ${{ env.PROD_AWS_ACCESS_KEY_ID != '' }}
+        run: make terraform-plan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+
+      - name: Apply infrastructure changes
+        if: ${{ env.PROD_AWS_ACCESS_KEY_ID != '' }}
+        run: make terraform-apply
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+
+      - name: Deploy main site
+        if: ${{ env.PROD_AWS_ACCESS_KEY_ID != '' }}
+        run: make deploy-main
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}

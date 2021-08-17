@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  site:
+    build: ./site
+    volumes:
+      - ./site:/site
+    ports:
+      - "1313:1313"
+    environment:
+      HUGO_ENV: "${HUGO_ENV}"
+      HUGO_CACHEDIR: /app/resources/_cache
+
+  terraform:
+    profiles:
+      - utilities
+    build: ./terraform
+    volumes:
+      - ./terraform:/terraform
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
+      TF_VAR_domain_name: "${DOMAIN_NAME}"
+
+  tfsec:
+    profiles:
+      - utilities
+    image: tfsec/tfsec:v0.58.4
+    volumes:
+      - ./terraform:/terraform
+
+  aws:
+    profiles:
+      - utilities
+    image: amazon/aws-cli:2.2.29
+    volumes:
+      - ./site:/site
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
