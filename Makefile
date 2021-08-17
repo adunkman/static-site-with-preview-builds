@@ -50,11 +50,11 @@ tfsec: ## Runs tfsec to scan for security issues
 	@docker-compose run tfsec /terraform
 
 .PHONY: deploy-main
-deploy: ## 🔒 Deploys compiled application files to static host
+deploy-main: ## 🔒 Deploys compiled application files to static host
 	@docker-compose run aws s3 sync /site/public/ s3://${DOMAIN_NAME}-site/
 
 .PHONY: deploy-preview
-deploy: ## 🔒 Deploys compiled application files to static host
+deploy-preview: ## 🔒 Deploys compiled application files to static host
 	@docker-compose run aws s3 sync /site/public/ s3://${DOMAIN_NAME}-previews/${PREVIEW_ENVIRONMENT}/
 
 .PHONY: terraform-init
