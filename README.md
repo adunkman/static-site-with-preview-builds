@@ -54,6 +54,8 @@ Terraform will need to run as a user in your AWS account, with permission to adm
     - CloudFrontFullAccess
     - AmazonRoute53FullAccess
     - AWSCertificateManagerFullAccess
+    - IAMFullAccess
+    - AWSWAFFullAccess
 
 2. **Copy the _Access Key ID_ and _Secret Access Key_** to the following locations:
 
