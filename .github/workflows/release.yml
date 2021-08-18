@@ -27,6 +27,12 @@ jobs:
 
       - name: Scan infrastructure files for security issues
         run: make tfsec
+        continue-on-error: true
+
+      - name: Upload results of security scan
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: tfsec.sarif.json
 
       - name: Initialize terraform
         if: ${{ env.AWS_ACCESS_KEY_ID != '' }}

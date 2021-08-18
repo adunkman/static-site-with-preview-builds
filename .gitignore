@@ -1,4 +1,5 @@
 .env
+tfsec.sarif.json
 
 ## OS Files
 # Windows
