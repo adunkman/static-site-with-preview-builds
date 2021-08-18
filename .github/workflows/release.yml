@@ -57,15 +57,12 @@ jobs:
 
       - name: Deploy main site
         if: ${{ env.AWS_ACCESS_KEY_ID != '' }}
-        run: make deploy-main
+        id: deploy
+        run: |
+          make deploy
+          echo "::set-output name=environment_url::https://${{ env.DOMAIN_NAME }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
-
-      - name: Set environment URL
-        if: ${{ env.AWS_ACCESS_KEY_ID != '' }}
-        id: deploy
-        run: echo "::set-output name=environment_url::https://${{ env.DOMAIN_NAME }}"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          DEPLOY_DESTINATION: s3://${{ env.DOMAIN_NAME }}-site/

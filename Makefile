@@ -49,13 +49,9 @@ docker-rebuild-tfsec: ## Rebuild docker image used for tfsec
 tfsec: ## Runs tfsec to scan for security issues
 	@docker-compose run tfsec /terraform
 
-.PHONY: deploy-main
-deploy-main: ## 🔒 Deploys compiled application files to static host
-	@docker-compose run aws s3 sync /site/public/ s3://${DOMAIN_NAME}-site/
-
-.PHONY: deploy-preview
-deploy-preview: ## 🔒 Deploys compiled application files to static host
-	@docker-compose run aws s3 sync /site/public/ s3://${DOMAIN_NAME}-previews/${PREVIEW_ENVIRONMENT}/
+.PHONY: deploy
+deploy: ## 🔒 Deploys compiled application files to static host
+	@docker-compose run aws s3 sync /site/public/ ${DEPLOY_DESTINATION}
 
 .PHONY: terraform-init
 terraform-init: ## 🔒 Runs terraform init

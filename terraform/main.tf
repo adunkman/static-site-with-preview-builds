@@ -26,6 +26,8 @@ module "route53" {
   domain_name = var.domain_name
   main_cloudfront_domain_name = module.main_cloudfront.cloudfront_domain_name
   main_cloudfront_hosted_zone_id = module.main_cloudfront.hosted_zone_id
+  preview_cloudfront_domain_name = module.preview_cloudfront.cloudfront_domain_name
+  preview_cloudfront_hosted_zone_id = module.preview_cloudfront.hosted_zone_id
 }
 
 module "waf" {

@@ -17,7 +17,7 @@ jobs:
       name: preview
       url: ${{ steps.deploy.outputs.environment_url }}
     env:
-      HUGO_ENV: production
+      PREVIEW_ENVIRONMENT: pr-${{ github.event.number }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -30,16 +30,12 @@ jobs:
 
       - name: Deploy preview site
         if: ${{ env.AWS_ACCESS_KEY_ID != '' && github.event.number != '' }}
-        run: make deploy-preview
+        id: deploy
+        run: |
+          make deploy
+          echo "::set-output name=environment_url::https://${{ env.PREVIEW_ENVIRONMENT }}.preview.${{ env.DOMAIN_NAME }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
-          PREVIEW_ENVIRONMENT: pr-${{ github.event.number }}
-
-      - name: Set environment URL
-        if: ${{ env.AWS_ACCESS_KEY_ID != '' && github.event.number != '' }}
-        id: deploy
-        run: echo "::set-output name=environment_url::https://pr-${{ github.event.number }}.preview.${{ env.DOMAIN_NAME }}"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          DEPLOY_DESTINATION: s3://${{ env.DOMAIN_NAME }}-preview/${{ env.PREVIEW_ENVIRONMENT }}/
