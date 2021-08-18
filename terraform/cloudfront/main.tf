@@ -2,6 +2,7 @@ resource "random_id" "s3_origin_id" {
   byte_length = 8
 }
 
+# tfsec:ignore:aws-cloudfront-enable-logging
 resource "aws_cloudfront_distribution" "distribution" {
   enabled = true
   is_ipv6_enabled = true
