@@ -68,3 +68,5 @@ jobs:
         if: ${{ env.AWS_ACCESS_KEY_ID != '' }}
         id: deploy
         run: echo "::set-output name=environment_url::https://www.${{ secrets.DOMAIN_NAME }}"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
