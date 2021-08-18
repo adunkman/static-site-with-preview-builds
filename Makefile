@@ -47,11 +47,7 @@ docker-rebuild-tfsec: ## Rebuild docker image used for tfsec
 
 .PHONY: tfsec
 tfsec: ## Runs tfsec to scan for security issues
-ifeq ($(CI),true)
-	@docker-compose run tfsec /terraform --format sarif > tfsec.sarif.json
-else
 	@docker-compose run tfsec /terraform
-endif
 
 .PHONY: deploy-main
 deploy-main: ## 🔒 Deploys compiled application files to static host
