@@ -94,9 +94,9 @@ You’re all set to trigger your first build, which will automatically configure
 
 Now that you’ve configured the `main` branch and run a deploy, Terraform has created a limited-permission deployment account for preview builds.
 
-1. **Head to the AWS IAM console** and find the user named `TODO`.
+1. **Head to the AWS IAM console** and find the user named `preview_deployer`.
 
-2. Somehow get the credentials, this part is also TODO.
+2. Create an access key for this user on the Security credentials tab.
 
 3. **Copy the _Access Key ID_ and _Secret Access Key_** to the following locations:
 
