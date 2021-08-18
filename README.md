@@ -72,9 +72,9 @@ Terraform will need to run as a user in your AWS account, with permission to adm
             - `AWS_ACCESS_KEY_ID` with your _Access Key ID_.
             - `AWS_SECRET_ACCESS_KEY` with your _Secret Access Key_.
 
-3. **Configure GitHub Actions repository secrets** which set project-wide settings. These aren’t strictly secret, but they’ll be used to store configuration values.
+3. **Configure GitHub Actions workflows** which set project-wide settings.
 
-    - In your repository settings, set the following repository secrets:
+    - In the `.github/workflows/` folder, at the top of `preview.yml` and `release.yml` set:
         - `DOMAIN_NAME` to your top-level domain you’ll be hosting at, without `https://` or `www.`.
             - Your preview builds will be accessible at `pr-[PULL_REQUEST_NUMBER].preview.[DOMAIN_NAME]` (for example, `pr-123.preview.example.com`).
             - This should be the same as the `DOMAIN_NAME` configured in `.env` locally.
