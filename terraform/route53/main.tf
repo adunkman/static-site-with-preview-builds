@@ -30,5 +30,6 @@ resource "aws_route53_record" "wildcard" {
   zone_id = aws_route53_zone.zone.zone_id
   name = "*.${var.domain_name}"
   type = "CNAME"
+  ttl = 30
   records = ["preview.${var.domain_name}"]
 }
