@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_lambda_function" "viewer_request" {
   function_name = "viewer_request"
   filename = data.archive_file.viewer_request.output_path
@@ -6,6 +8,10 @@ resource "aws_lambda_function" "viewer_request" {
   handler = "viewer-request.handler"
   runtime = "nodejs12.x"
   publish = true
+
+  tracing_config {
+    mode = "PassThrough"
+  }
 }
 
 data "archive_file" "viewer_request" {
@@ -52,6 +58,8 @@ data "aws_iam_policy_document" "viewer_request_access" {
       "logs:PutLogEvents",
     ]
 
-    resources = ["*"]
+    resources = [
+      "arn:aws:logs:*:${data.aws_caller_identity.current.account_id}:log-group:*"
+    ]
   }
 }
