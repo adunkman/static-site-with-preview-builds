@@ -17,12 +17,4 @@ data "aws_iam_policy_document" "allow_preview_access" {
 
     resources = ["${var.preview_s3_arn}/*"]
   }
-
-  statement {
-    actions = [
-      "cloudfront:CreateDistribution"
-    ]
-
-    resources = ["${var.preview_cloudfront_arn}/*"]
-  }
 }

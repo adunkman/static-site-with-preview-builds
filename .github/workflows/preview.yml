@@ -17,7 +17,7 @@ jobs:
       name: preview
       url: ${{ steps.deploy.outputs.environment_url }}
     env:
-      PREVIEW_ENVIRONMENT: pr-${{ github.event.number }}
+      PREVIEW_ENVIRONMENT: pr${{ github.event.number }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

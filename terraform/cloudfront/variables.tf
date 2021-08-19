@@ -13,3 +13,8 @@ variable "acm_certificate_arn" {
 variable "s3_bucket_regional_domain_name" {
   type = string
 }
+
+variable "viewer_request_arn" {
+  type = string
+  default = null
+}

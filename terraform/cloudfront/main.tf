@@ -42,6 +42,14 @@ resource "aws_cloudfront_distribution" "distribution" {
 
     viewer_protocol_policy = "redirect-to-https"
     compress = true
+
+    dynamic "lambda_function_association" {
+      for_each = var.viewer_request_arn == null ? [] : [var.viewer_request_arn]
+      content {
+        event_type = "viewer-request"
+        lambda_arn = var.viewer_request_arn
+      }
+    }
   }
 
   viewer_certificate {
