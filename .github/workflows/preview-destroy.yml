@@ -1,0 +1,30 @@
+name: Destroy preview
+
+on:
+  pull_request:
+    types: [closed]
+
+env:
+  DOMAIN_NAME: static-site-with-preview-builds.dunkman.me
+  AWS_DEFAULT_REGION: us-east-1
+
+jobs:
+  destroy-preview:
+    name: Destroy preview
+    runs-on: ubuntu-latest
+    environment:
+      name: preview
+    env:
+      PREVIEW_ENVIRONMENT: pr${{ github.event.number }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Destroy preview site
+        if: ${{ env.AWS_ACCESS_KEY_ID != '' && github.event.number != '' }}
+        run: make destroy-preview
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
+          DEPLOY_DESTINATION: s3://${{ env.DOMAIN_NAME }}-preview/${{ env.PREVIEW_ENVIRONMENT }}/

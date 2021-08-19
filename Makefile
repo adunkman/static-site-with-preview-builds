@@ -53,6 +53,10 @@ tfsec: ## Runs tfsec to scan for security issues
 deploy: ## 🔒 Deploys compiled application files to static host
 	@docker-compose run aws s3 sync /site/public/ ${DEPLOY_DESTINATION}
 
+.PHONY: destroy-preview
+destroy-preview: ## 🔒 Destroys a preview environment
+	@docker-compose run aws s3 rm ${DEPLOY_DESTINATION} --recursive
+
 .PHONY: terraform-init
 terraform-init: ## 🔒 Runs terraform init
 	@docker-compose run terraform init -backend-config="bucket=${DOMAIN_NAME}-terraform"

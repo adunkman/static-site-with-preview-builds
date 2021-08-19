@@ -75,7 +75,7 @@ Terraform will need to run as a user in your AWS account, with permission to adm
 
 3. **Configure GitHub Actions workflows** which set project-wide settings.
 
-    - In the `.github/workflows/` folder, at the top of `preview.yml` and `release.yml` set:
+    - In the `.github/workflows/` folder at the top of `preview.yml`, `preview-destroy.yml`, and `release.yml` set:
         - `DOMAIN_NAME` to your top-level domain you’ll be hosting at, without `https://` or `www.`.
             - Your preview builds will be accessible at `pr[PULL_REQUEST_NUMBER].[DOMAIN_NAME]` (for example, `pr123.example.com`).
             - This should be the same as the `DOMAIN_NAME` configured in `.env` locally.
