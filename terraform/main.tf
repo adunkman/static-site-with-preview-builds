@@ -62,7 +62,7 @@ module "preview_s3" {
 
 module "preview_cloudfront" {
   source = "./cloudfront"
-  domain_name = "*.${var.domain_name}"
+  domain_name = "*.preview.${var.domain_name}"
   web_acl_arn = module.waf.arn
   acm_certificate_arn = module.certificate.arn
   s3_bucket_regional_domain_name = module.main_s3.regional_domain_name
