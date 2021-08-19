@@ -12,6 +12,7 @@ data "aws_iam_policy_document" "allow_preview_access" {
     actions = [
       "s3:GetObject",
       "s3:PutObject",
+      "s3:DeleteObject",
     ]
 
     resources = ["${var.preview_s3_arn}/*"]
