@@ -1,7 +1,15 @@
-relativeURLs: true
 languageCode: en-us
 title: Example static site
+relativeURLs: true
 
 ignoreFiles:
   - .gitignore
   - Dockerfile
+
+disableKinds:
+  - taxonomy
+  - RSS
+  - section
+
+ignoreErrors:
+  - error-disable-taxonomy
