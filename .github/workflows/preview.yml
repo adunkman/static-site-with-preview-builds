@@ -33,7 +33,7 @@ jobs:
         id: deploy
         run: |
           make deploy
-          echo "::set-output name=environment_url::https://${{ env.PREVIEW_ENVIRONMENT }}.preview.${{ env.DOMAIN_NAME }}"
+          echo "::set-output name=environment_url::https://${{ env.PREVIEW_ENVIRONMENT }}.${{ env.DOMAIN_NAME }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

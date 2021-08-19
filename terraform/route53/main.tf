@@ -16,7 +16,7 @@ resource "aws_route53_record" "main" {
 
 resource "aws_route53_record" "preview" {
   zone_id = aws_route53_zone.zone.zone_id
-  name = "*.preview.${var.domain_name}"
+  name = "*.${var.domain_name}"
   type = "CNAME"
 
   alias {

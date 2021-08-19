@@ -31,7 +31,7 @@ exports.handler = async (event) => {
 const parsePreviewEnvironment = (host) => {
   const subdomain = host.split('.')[0];
 
-  if (/pr\d+/.test(subdomain)) {
+  if (/^pr\d+$/.test(subdomain)) {
     return subdomain;
   }
 };
