@@ -1,4 +1,4 @@
-name: Pull request checks
+name: PR
 
 on:
   pull_request:
@@ -23,40 +23,12 @@ jobs:
   deploy:
     name: Deploy preview
     runs-on: ubuntu-latest
-    permissions:
-      deployments: write
+    environment:
+      name: pr${{ github.event.number }}
+      url: https://pr${{ github.event.number }}.${{ env.DOMAIN_NAME }}
     env:
       PREVIEW_ENVIRONMENT: pr${{ github.event.number }}
     steps:
-      - name: Find the current deployment
-        uses: octokit/request-action@v2.1.0
-        id: find_deployment
-        with:
-          route: GET /repos/{repository}/deployments
-          mediaType: |
-            previews:
-              - ant-man
-              - flash
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref }}
-          environment: ${{ env.PREVIEW_ENVIRONMENT }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Mark deployment as in progress
-        uses: octokit/request-action@v2.1.0
-        with:
-          route: POST /repos/{repository}/deployments/{deployment_id}/statuses
-          mediaType: |
-            previews:
-              - ant-man
-              - flash
-          repository: ${{ github.repository }}
-          deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
-          state: in_progress
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -71,18 +43,3 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
           DEPLOY_DESTINATION: s3://${{ env.DOMAIN_NAME }}-preview/${{ env.PREVIEW_ENVIRONMENT }}/
-
-      - name: Mark deployment as successful
-        uses: octokit/request-action@v2.1.0
-        with:
-          route: POST /repos/{repository}/deployments/{deployment_id}/statuses
-          mediaType: |
-            previews:
-              - ant-man
-              - flash
-          repository: ${{ github.repository }}
-          deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
-          state: success
-          environment_url: https://${{ env.PREVIEW_ENVIRONMENT }}.${{ env.DOMAIN_NAME }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

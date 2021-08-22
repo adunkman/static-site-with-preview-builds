@@ -10,22 +10,12 @@ env:
   AWS_DEFAULT_REGION: us-east-1
 
 jobs:
-  tfsec:
-    name: Scan infrastructure files for security issues
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Run tfsec
-        run: make tfsec
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     environment:
       name: main
-      url: ${{ steps.deploy.outputs.environment_url }}
+      url: https://${{ env.DOMAIN_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -65,9 +55,7 @@ jobs:
       - name: Deploy main site
         if: ${{ env.AWS_ACCESS_KEY_ID != '' }}
         id: deploy
-        run: |
-          make deploy
-          echo "::set-output name=environment_url::https://${{ env.DOMAIN_NAME }}"
+        run: make deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
