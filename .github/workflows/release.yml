@@ -10,6 +10,16 @@ env:
   AWS_DEFAULT_REGION: us-east-1
 
 jobs:
+  tfsec:
+    name: Scan infrastructure files for security issues
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run tfsec
+        run: make tfsec
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -27,9 +37,6 @@ jobs:
 
       - name: Build site
         run: make build
-
-      - name: Scan infrastructure files for security issues
-        run: make tfsec
 
       - name: Initialize terraform
         if: ${{ env.AWS_ACCESS_KEY_ID != '' }}

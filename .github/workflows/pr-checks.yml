@@ -1,16 +1,27 @@
-name: Destroy preview
+name: Pull request checks
 
 on:
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, reopened]
 
 env:
+  HUGO_ENV: production
   DOMAIN_NAME: static-site-with-preview-builds.dunkman.me
   AWS_DEFAULT_REGION: us-east-1
 
 jobs:
-  destroy-preview:
-    name: Destroy preview environment
+  tfsec:
+    name: Scan infrastructure files for security issues
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run tfsec
+        run: make tfsec
+
+  deploy:
+    name: Deploy preview
     runs-on: ubuntu-latest
     permissions:
       deployments: write
@@ -31,7 +42,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Mark deployment as inactive
+      - name: Mark deployment as in progress
         uses: octokit/request-action@v2.1.0
         with:
           route: POST /repos/{repository}/deployments/{deployment_id}/statuses
@@ -40,30 +51,35 @@ jobs:
               - ant-man
           repository: ${{ github.repository }}
           deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
-          state: inactive
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete the deployment
-        uses: octokit/request-action@v2.1.0
-        with:
-          route: DELETE /repos/{repository}/deployments/{deployment_id}
-          mediaType: |
-            previews:
-              - ant-man
-          repository: ${{ github.repository }}
-          deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
+          state: in_progress
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Destroy preview site
-        if: ${{ env.AWS_ACCESS_KEY_ID != '' && github.event.number != '' }}
-        run: make destroy-preview
+      - name: Build site
+        run: make build
+
+      - name: Deploy preview site
+        id: deploy
+        run: make deploy
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
           DEPLOY_DESTINATION: s3://${{ env.DOMAIN_NAME }}-preview/${{ env.PREVIEW_ENVIRONMENT }}/
+
+      - name: Mark deployment as successful
+        uses: octokit/request-action@v2.1.0
+        with:
+          route: POST /repos/{repository}/deployments/{deployment_id}/statuses
+          mediaType: |
+            previews:
+              - ant-man
+          repository: ${{ github.repository }}
+          deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
+          state: success
+          environment_url: https://${{ env.PREVIEW_ENVIRONMENT }}.${{ env.DOMAIN_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

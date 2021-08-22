@@ -99,9 +99,9 @@ Now that you’ve configured the `main` branch and run a deploy, Terraform has c
 
 2. Create an access key for this user on the Security credentials tab.
 
-3. **Copy the _Access Key ID_ and _Secret Access Key_** to the following locations:
+3. **Copy the _Access Key ID_ and _Secret Access Key_** to the following location:
 
-    - **Create a GitHub Actions Environment** in your repository settings named `preview`.
+    - **Create GitHub Repository Secret** in your repository settings (not an environment — we’ll be using these secrets across many deployed preview environments).
 
         - Add two environment secrets:
             - `AWS_ACCESS_KEY_ID` with your _Access Key ID_.
