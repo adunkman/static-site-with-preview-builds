@@ -12,50 +12,9 @@ jobs:
   destroy-preview:
     name: Destroy preview environment
     runs-on: ubuntu-latest
-    permissions:
-      deployments: write
     env:
       PREVIEW_ENVIRONMENT: pr${{ github.event.number }}
     steps:
-      - name: Find the current deployment
-        uses: octokit/request-action@v2.1.0
-        id: find_deployment
-        with:
-          route: GET /repos/{repository}/deployments
-          mediaType: |
-            previews:
-              - ant-man
-          repository: ${{ github.repository }}
-          ref: ${{ github.ref }}
-          environment: ${{ env.PREVIEW_ENVIRONMENT }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Mark deployment as inactive
-        uses: octokit/request-action@v2.1.0
-        with:
-          route: POST /repos/{repository}/deployments/{deployment_id}/statuses
-          mediaType: |
-            previews:
-              - ant-man
-          repository: ${{ github.repository }}
-          deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
-          state: inactive
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete the deployment
-        uses: octokit/request-action@v2.1.0
-        with:
-          route: DELETE /repos/{repository}/deployments/{deployment_id}
-          mediaType: |
-            previews:
-              - ant-man
-          repository: ${{ github.repository }}
-          deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout code
         uses: actions/checkout@v2
 
