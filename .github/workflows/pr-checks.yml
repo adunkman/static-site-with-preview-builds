@@ -33,33 +33,3 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
           DEPLOY_DESTINATION: s3://${{ env.DOMAIN_NAME }}-preview/${{ env.PREVIEW_ENVIRONMENT }}/
-
-  plan:
-    name: Plan infrastructure changes
-    runs-on: ubuntu-latest
-    environment:
-      name: main
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - uses: actions/cache@v2
-        with:
-          path: terraform/.terraform
-          key: v1-${{ hashFiles('terraform/.terraform.lock.hcl', 'terraform/main.tf') }}
-
-      - name: Initialize terraform
-        if: ${{ env.AWS_ACCESS_KEY_ID != '' }}
-        run: make terraform-init
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
-
-      - name: Plan infrastructure changes
-        if: ${{ env.AWS_ACCESS_KEY_ID != '' }}
-        run: make terraform-plan
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ env.AWS_DEFAULT_REGION }}
