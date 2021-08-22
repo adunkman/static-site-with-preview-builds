@@ -36,6 +36,7 @@ jobs:
           mediaType: |
             previews:
               - ant-man
+              - flash
           repository: ${{ github.repository }}
           ref: ${{ github.ref }}
           environment: ${{ env.PREVIEW_ENVIRONMENT }}
@@ -49,6 +50,7 @@ jobs:
           mediaType: |
             previews:
               - ant-man
+              - flash
           repository: ${{ github.repository }}
           deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
           state: in_progress
@@ -77,6 +79,7 @@ jobs:
           mediaType: |
             previews:
               - ant-man
+              - flash
           repository: ${{ github.repository }}
           deployment_id: ${{ fromJson(steps.find_deployment.outputs.data)[0].id }}
           state: success

@@ -2,6 +2,8 @@
 <html lang="{{ .Site.LanguageCode }}">
   <head>
     <title>{{ .Site.Title }}</title>
+    {{- $stylesheet := resources.Get "main.css" | fingerprint "sha512" }}
+    <link rel="stylesheet" href="{{ $stylesheet.RelPermalink }}" integrity="{{ $stylesheet.Data.Integrity }}">
   </head>
   <body>
     {{ block "body" . -}}{{- end }}
